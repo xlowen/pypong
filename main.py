@@ -1,7 +1,8 @@
 import time
-from turtle import Turtle, Screen
+from turtle import Screen
 from paddle import Paddle
 from ball import Ball
+from scoreboard import Scoreboard
 screen = Screen()
 
 screen.title("Lowen's pong")
@@ -9,11 +10,13 @@ screen.bgcolor("black")
 screen.screensize(800, 600)
 screen.tracer(0)
 
-
+scoreboard_1 = Scoreboard(-120)
+scoreboard_2 = Scoreboard(140)
 paddle_1 = Paddle(350, 0)
 paddle_2 = Paddle(-350, 0)
 
 ball = Ball()
+
 
 screen.listen()
 screen.onkey(paddle_1.move_up, "Up")
@@ -24,49 +27,55 @@ screen.onkey(paddle_2.move_down, "s")
 game_is_on = True
 ball.ball_heading()
 forward = True
+ball_speed = 0
+
 
 while game_is_on:
     screen.update()
-    time.sleep(0.1)
+    time.sleep(0.1 + ball_speed)
 
     if forward:
         ball.ball_move_fw()
 
         if ball.distance(paddle_1) < 50 and ball.xcor() > 330:
-            print("ball.xcor() é:  " + str(ball.xcor()))
             ball.ball_heading()
+            ball_speed -= 0.01
             forward = False
 
     else:
         ball.ball_move_bw()
 
         if ball.distance(paddle_2) < 50 and ball.xcor() < -330:
-            print("ball.xcor() é:  " + str(ball.xcor()))
             ball.ball_heading()
+            ball_speed -= 0.01
             forward = True
 
-    if ball.xcor() > 465 or ball.xcor() < -465:
-        print("outside at x", ball.xcor())
-        game_is_on = False
+    if ball.xcor() > 465:
+        scoreboard_1.p1_scr_update()
+        ball.reset()
+        screen.update()
+        time.sleep(1)
+        ball_speed = 0
+        forward = True
 
-    if ball.ycor() > 405 or ball.ycor() < -405:
-        print("outside at y", ball.ycor())
+    if ball.xcor() < -465:
+        scoreboard_2.p2_scr_update()
+        ball.reset()
+        screen.update()
+        time.sleep(1)
+        ball_speed = 0
+        forward = False
+
+    if ball.ycor() > 405:
         ball.bounce(ball.heading())
 
+    if ball.ycor() < -405:
+        ball.bounce(ball.heading())
 
-# todo Create Screen
-# todo Create and move paddle
-# todo Create another paddle
-# todo Create ball and move it
-# todo detect collision with wall and bounce
-# todo detect collision with paddle and bounce
-# todo detect detect paddle miss
-# todo detect keep score
-
-
-
-
-
-
+    if scoreboard_1.get_score() == 5 or scoreboard_2.get_score() == 5:
+        scoreboard_1.clear()
+        scoreboard_2.clear()
+        scoreboard_1.write("Game over. :)", False, "center", ("Arial", 40, "normal"))
+        game_is_on = False
 
 screen.exitonclick()
