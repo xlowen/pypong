@@ -19,10 +19,10 @@ ball = Ball()
 
 
 screen.listen()
-screen.onkey(paddle_1.move_up, "Up")
-screen.onkey(paddle_1.move_down, "Down")
-screen.onkey(paddle_2.move_up, "w")
-screen.onkey(paddle_2.move_down, "s")
+screen.onkeypress(paddle_1.move_up, "Up")
+screen.onkeypress(paddle_1.move_down, "Down")
+screen.onkeypress(paddle_2.move_up, "w")
+screen.onkeypress(paddle_2.move_down, "s")
 
 game_is_on = True
 ball.ball_heading()
